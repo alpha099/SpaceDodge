@@ -27,7 +27,7 @@ Go to the project directory
 Install dependencies
 
 ```bash
-  pip install -r requirements.txt
+  pip install pygame
 ```
 
 Run the project by...
