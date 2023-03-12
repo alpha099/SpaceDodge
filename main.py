@@ -3,8 +3,8 @@ import time
 import random
 pygame.font.init()
 
-WIDTH, HIEGHT = 1000, 800 
-WIN = pygame.display.set_mode((WIDTH, HIEGHT))
+WIDTH, HEIGHT = 1000, 800 
+WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 
 PLAYER_WIDTH = 40
 PLAYER_HEIGHT = PLAYER_WIDTH * 2.046 # keep correct aspect ratio of image
@@ -15,10 +15,35 @@ STAR_HEIGHT = 20
 STAR_VEL = 5
 FONT = pygame.font.SysFont("comicsans", 30)
 
-BG = pygame.transform.scale(pygame.image.load("./Images/bg.jpeg"), (WIDTH, HIEGHT))
+BG = pygame.transform.scale(pygame.image.load("./Images/bg.jpeg"), (WIDTH, HEIGHT))
 PLAYER_IMG = pygame.transform.scale(pygame.image.load("./Images/rocket.png"), (PLAYER_WIDTH, PLAYER_HEIGHT))
 
 pygame.display.set_caption("Space Dodge")
+
+def start_screen():
+    title_font = pygame.font.SysFont("comicsans", 60)
+    title_text = title_font.render("Space Dodge", 1, "white")
+
+    start_font = pygame.font.SysFont("comicsans", 40)
+    start_text = start_font.render("Start Game", 1, "white")
+    start_text_rect = start_text.get_rect(center=(WIDTH/2, HEIGHT/2))
+
+    bg_image = pygame.transform.scale(pygame.image.load("./Images/bg.jpeg"), (WIDTH, HEIGHT))
+
+    while True:
+        WIN.blit(bg_image, (0, 0))
+        WIN.blit(title_text, (WIDTH/2 - title_text.get_width()/2, 100))
+        WIN.blit(start_text, start_text_rect)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                return
+
+        pygame.display.update()
+
 
 def draw(player,elapsed_time,stars):
     WIN.blit(BG, (0,0))
@@ -35,9 +60,10 @@ def draw(player,elapsed_time,stars):
 
 
 def main():
+    start_screen()
     run = True
 
-    player = pygame.Rect(200, HIEGHT-PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT)
+    player = pygame.Rect(200, HEIGHT-PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT)
 
     clock = pygame.time.Clock()
 
@@ -73,7 +99,7 @@ def main():
 
         for star in stars[:]:
            star.y += STAR_VEL
-           if star.y > HIEGHT:
+           if star.y > HEIGHT:
             stars.remove(star)
            elif star.y >= player.y and star.colliderect(player):
                stars.remove(star)
@@ -82,7 +108,7 @@ def main():
 
         if hit:
             lost_text = FONT.render("GAME OVER", 1, "white")
-            WIN.blit(lost_text,(WIDTH/2 - lost_text.get_width()/2, HIEGHT/2 - lost_text.get_height()/2))
+            WIN.blit(lost_text,(WIDTH/2 - lost_text.get_width()/2, HEIGHT/2 - lost_text.get_height()/2))
             pygame.display.update()
             pygame.time.delay(4000)
             break
