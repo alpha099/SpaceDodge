@@ -33,12 +33,13 @@ Install dependencies
 Run the project by...
 
 ## 🗺️ Where are we going
-- Adding some good functionaltites
+- Adding some good functionaltites  
 - How a basic game turned into something really good and got launched 🚀
-Our current roadmap for the project is:
+
+## Our current roadmap for the project is:
 
 - Our focus is on Improving the existing logic
-- Make this game really Fun to play game
+- Make this game really Fun to play 
 
 ## 🖥️ What technologies are we using
 
