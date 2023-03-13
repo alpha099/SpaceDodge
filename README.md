@@ -21,7 +21,7 @@ Clone the project
 Go to the project directory
 
 ```bash
-  cd SpaceDodge-
+  cd SpaceDodge
 ```
 
 Install dependencies
