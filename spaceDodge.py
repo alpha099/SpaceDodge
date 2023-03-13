@@ -1,7 +1,13 @@
 import pygame
 import time
 import random
+import pygame.mixer
 pygame.font.init()
+
+
+pygame.init()
+pygame.mixer.init()  # Intialize mixer module
+pygame.mixer.music.load("./Sound/gameplay.mp3") # Load Music
 
 WIDTH, HEIGHT = 1000, 800 
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -60,7 +66,9 @@ def draw(player,elapsed_time,stars):
 
 
 def main():
+    pygame.mixer.music.play(-1)
     start_screen()
+    
     run = True
 
     player = pygame.Rect(200, HEIGHT-PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT)
@@ -111,6 +119,7 @@ def main():
             WIN.blit(lost_text,(WIDTH/2 - lost_text.get_width()/2, HEIGHT/2 - lost_text.get_height()/2))
             pygame.display.update()
             pygame.time.delay(4000)
+            pygame.mixer.music.stop()
             break
 
         draw(player,elapsed_time,stars)
