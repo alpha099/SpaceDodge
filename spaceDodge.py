@@ -64,6 +64,24 @@ def draw(player,elapsed_time,stars):
 
     pygame.display.update()
 
+def gameover_screen():
+    while True:
+        WIN.blit(BG, (0, 0))
+        lost_text = FONT.render("GAME OVER", 1, "white")
+        WIN.blit(lost_text, (WIDTH / 2 - lost_text.get_width() / 2, HEIGHT / 2 - lost_text.get_height() / 2))
+        restart_text = FONT.render("Press R to restart", 1, "white")
+        WIN.blit(restart_text, (WIDTH / 2 - restart_text.get_width() / 2, HEIGHT / 2 - restart_text.get_height() / 2 + 50))
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    main()  # Call main function to restart the game
+                    return
+
 
 def main():
     pygame.mixer.music.play(-1)
@@ -115,11 +133,12 @@ def main():
                break 
 
         if hit:
-            lost_text = FONT.render("GAME OVER", 1, "white")
+            """ lost_text = FONT.render("GAME OVER", 1, "white")
             WIN.blit(lost_text,(WIDTH/2 - lost_text.get_width()/2, HEIGHT/2 - lost_text.get_height()/2))
             pygame.display.update()
             pygame.time.delay(4000)
-            pygame.mixer.music.stop()
+            pygame.mixer.music.stop() """
+            gameover_screen()
             break
 
         draw(player,elapsed_time,stars)
