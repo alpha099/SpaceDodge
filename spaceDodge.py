@@ -150,6 +150,8 @@ def main():
             elif star.y >= player.y and star.colliderect(player):
                 stars.remove(star)
                 hit = True
+                pygame.mixer.music.stop()
+                pygame.mixer.Sound("./Sound/Explosion.flac").play()
                 break
 
         if hit:
