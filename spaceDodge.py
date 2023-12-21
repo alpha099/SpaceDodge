@@ -1,13 +1,13 @@
 import pygame
 import time
 import random
-import pygame.mixer
+from pygame import mixer as mixer
 pygame.font.init()
 
 
 pygame.init()
-pygame.mixer.init()  # Intialize mixer module
-pygame.mixer.music.load("./Sound/gameplay.mp3") # Load Music
+mixer.init()  # Intialize mixer module
+mixer.music.load("./Sound/gameplay.mp3") # Load Music
 
 WIDTH, HEIGHT = 1000, 800 
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -65,7 +65,7 @@ def draw(player,elapsed_time,stars):
     pygame.display.update()
 
 def gameover_screen(elapsed_time):
-    pygame.mixer.music.stop()
+    mixer.music.stop()
 
     # Splash screen
     splash_duration = 3  # seconds
@@ -85,6 +85,16 @@ def gameover_screen(elapsed_time):
     while run_gameover_screen:
         WIN.fill((0, 0, 0))  # Change the background color as needed
 
+        high_score = get_high_score()
+
+        if elapsed_time > high_score:
+            high_score = elapsed_time
+            save_high_score(high_score)
+
+        # Display high score
+        high_score_text = FONT.render(f"High Score: {round(high_score)}s", 1, "white")
+        WIN.blit(high_score_text, (WIDTH / 2 - high_score_text.get_width() / 2, HEIGHT / 2 + -50))
+
         lost_text = FONT.render("GAME OVER", 1, "white")
         WIN.blit(lost_text, (WIDTH / 2 - lost_text.get_width() / 2, HEIGHT / 2 - lost_text.get_height() / 2))
         restart_text = FONT.render("Press R to restart", 1, "white")
@@ -103,7 +113,7 @@ def gameover_screen(elapsed_time):
 
 
 def main():
-    pygame.mixer.music.play(-1)
+    mixer.music.play(-1)
     start_screen()
 
     run = True
@@ -150,8 +160,8 @@ def main():
             elif star.y >= player.y and star.colliderect(player):
                 stars.remove(star)
                 hit = True
-                pygame.mixer.music.stop()
-                pygame.mixer.Sound("./Sound/Explosion.flac").play()
+                mixer.music.stop()
+                mixer.Sound("./Sound/Explosion.flac").play()
                 break
 
         if hit:
@@ -161,6 +171,22 @@ def main():
         draw(player, elapsed_time, stars)
 
     pygame.quit()     
+
+def get_high_score():
+    try:
+        with open("high_score.txt", "r") as file:
+            return int(file.read())
+    except FileNotFoundError:
+        return 0
+    except ValueError:
+        return 0
+
+
+def save_high_score(score):
+    with open("high_score.txt", "w") as file:
+        file.write(str(score))
+
+
 
 
 if __name__ == "__main__":
