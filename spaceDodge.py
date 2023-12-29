@@ -112,6 +112,22 @@ def gameover_screen(elapsed_time):
                     run_gameover_screen = False
 
 
+def get_high_score():
+    try:
+        with open("high_score.txt", "r") as file:
+            return int(file.read())
+    except FileNotFoundError:
+        return 0
+    except ValueError:
+        return 0
+
+
+def save_high_score(score):
+    with open("high_score.txt", "w") as file:
+        file.write(str(score))
+
+
+
 def main():
     mixer.music.play(-1)
     start_screen()
@@ -171,20 +187,6 @@ def main():
         draw(player, elapsed_time, stars)
 
     pygame.quit()     
-
-def get_high_score():
-    try:
-        with open("high_score.txt", "r") as file:
-            return int(file.read())
-    except FileNotFoundError:
-        return 0
-    except ValueError:
-        return 0
-
-
-def save_high_score(score):
-    with open("high_score.txt", "w") as file:
-        file.write(str(score))
 
 
 
