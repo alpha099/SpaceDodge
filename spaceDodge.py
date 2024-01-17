@@ -2,6 +2,7 @@ import pygame
 import time
 import random
 from pygame import mixer as mixer
+import math
 
 pygame.font.init()
 
@@ -90,7 +91,7 @@ def draw(player, elapsed_time, stars):
     pygame.display.update()
 
 # Function to display the game over screen
-def gameover_screen(elapsed_time):
+def gameover_screen(starcount, elapsed_time):
     # Stop the background music
     mixer.music.stop()
 
@@ -117,18 +118,34 @@ def gameover_screen(elapsed_time):
         # Display a black screen
         WIN.fill((0, 0, 0))  
 
+        high_score=math.ceil(starcount*elapsed_time*0.1)
+
         # Get the saved high score from the function get_high_score()
-        high_score = get_high_score()
+        saved_elapsed_time = float(get_high_score(1))
+        saved_high_score = float(get_high_score(2))
 
         # Check if the current score is higher than the saved high score
         # If the current score is higher than the saved high score, save the current score as the new high score
-        if elapsed_time > high_score:
-            high_score = elapsed_time
-            save_high_score(high_score)
+        if elapsed_time > saved_elapsed_time:
+            new_elapsed_time = elapsed_time
+            save_high_score(1, new_elapsed_time)
+
+        if high_score > saved_high_score:
+            new_high_score = high_score
+            save_high_score(2, new_high_score)
 
         # Display high score
-        high_score_text = FONT.render(f"High Score: {round(high_score)}s", 1, "white")
-        WIN.blit(high_score_text, (WIDTH / 2 - high_score_text.get_width() / 2, HEIGHT / 2 + -50))
+        high_score_text = FONT.render(f"your Score: {round(high_score)}", 1, "white")
+        WIN.blit(high_score_text, (WIDTH / 2 - high_score_text.get_width() / 2, HEIGHT / 2 + -400))
+        # Display saved high score
+        saved_high_score_text = FONT.render(f"High Score: {round(saved_high_score)}", 1, "white")
+        WIN.blit(saved_high_score_text, (WIDTH / 2 - saved_high_score_text.get_width() / 2, HEIGHT / 2 + -350))
+        # Display elapsed time
+        elapsed_time_text = FONT.render(f"survived time: {round(elapsed_time)}s", 1, "white")
+        WIN.blit(elapsed_time_text, (WIDTH / 2 - elapsed_time_text.get_width() / 2, HEIGHT / 2 + -200))
+        # Display saved elapsed time
+        saved_elapsed_time_text = FONT.render(f"Highest survived time: {round(saved_elapsed_time)}s", 1, "white")
+        WIN.blit(saved_elapsed_time_text, (WIDTH / 2 - saved_elapsed_time_text.get_width() / 2, HEIGHT / 2 + -150))
         # Display game over message
         lost_text = FONT.render("GAME OVER", 1, "white")
         WIN.blit(lost_text, (WIDTH / 2 - lost_text.get_width() / 2, HEIGHT / 2 - lost_text.get_height() / 2))
@@ -150,31 +167,76 @@ def gameover_screen(elapsed_time):
                     run_gameover_screen = False
 
 # Function to get the high score from a file
-def get_high_score():
+def get_high_score(command):
     # Try to read the high score from the file
+    # Depending on the command (1 or 2) return the elapsed time or the high score
     try:
         with open("high_score.txt", "r") as file:
-            return int(file.read())
+            lines = file.readlines()
+
+            for line in lines:
+                parts = line.strip().split(" : ")
+                if len(parts) == 2:
+                    current_command, value = parts
+                    if current_command == str(command):
+                        if value==None:
+                            return int(0)
+                        return float(value)
+
+            # If the command is not found, create it and set the initial value to an empty string
+            with open("high_score.txt", "a") as file:
+                file.write(f"{command} : 0\n")
+            return ""
+
     except FileNotFoundError:
-        # If the file is not found, create it and set the initial high score to 0
+        # If the file is not found, create it and set the initial value to an empty string
         with open("high_score.txt", "w") as file:
-            file.write("0")
-        return 0
+            file.write("1 : 0\n2 : 0\n")
+        return ""
+
     except ValueError:
         # Handle the case where the file contains invalid data
         # For example, if someone manually edits the file and enters non-numeric data
-        print("Invalid data found in high_score.txt. Resetting to 0.")
+        print("Invalid data found in high_score.txt. Resetting to empty values.")
         with open("high_score.txt", "w") as file:
-            file.write("0")
-        return 1
+            file.write("1 : 0\n2 : 0\n")
+        return ""
+
 
 
 # Function to save the high score to a file
-# we don't need to check if the file exists because we already did that in the get_high_score() function
-# and this function is only called if the player has a new high score
-def save_high_score(score):
-    with open("high_score.txt", "w") as file:
-        file.write(str(score))
+
+def save_high_score(command, score):
+    try:
+        with open("high_score.txt", "r") as file:
+            lines = file.readlines()
+            file.close()
+
+        with open("high_score.txt", "w") as file:
+            for line in lines:
+                parts = line.strip().split(" : ")
+                if len(parts) == 2:
+                    current_command, _ = parts
+                    if current_command == str(command):
+                        file.write(f"{command} : {score}\n")
+                    else:
+                        file.write(line)
+
+            # If the command is not found, create it and set the initial score
+            if str(command) not in [part.split(" : ")[0] for part in lines]:
+                file.write(f"{command} : {score}\n")
+
+    except FileNotFoundError:
+        # If the file is not found, create it and set the initial score
+        with open("high_score.txt", "w") as file:
+            file.write(f"1 : {score}\n2 : 0\n" if command == 1 else f"1 : 0\n2 : {score}\n")
+
+    except ValueError:
+        # Handle the case where the file contains invalid data
+        # For example, if someone manually edits the file and enters non-numeric data
+        print("Invalid data found in high_score.txt. Resetting to default values.")
+        with open("high_score.txt", "w") as file:
+            file.write("1 : 0\n2 : 0\n")
 
 # Main game function
 def main():
@@ -254,7 +316,7 @@ def main():
         
         # If the player has collided with a star, display the game over screen and stop the game loop
         if hit:
-            gameover_screen(elapsed_time)  
+            gameover_screen(star_count, elapsed_time)  
             run = False  
 
         # Draw the game screen
