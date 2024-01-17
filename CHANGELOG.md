@@ -9,3 +9,4 @@
 - added a true highscore (time*stars/10)            (commit f8180d5)
 - changed Game Over screen (Highscore + time)       (commit f8180d5)
 - changed README slightly to offer an introduction  (commit 27cb56a)
+- addded a powerup that gets rid of some stars      (commit 91bf9f9)

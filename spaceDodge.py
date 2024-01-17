@@ -269,8 +269,8 @@ def main():
 
     powerup = None
     powerup_spawn_time = random.randint(30,90)  # random time between 30 and 90 seconds
-    powerup_interval = random.radint(20,60)     # random time between 20 and 60 seconds
-    powerup_duration = random.radint(5,20)     # random time between 5 and 20 seconds
+    powerup_interval = random.randint(20,60)     # random time between 20 and 60 seconds
+    powerup_duration = random.randint(5,20)     # random time between 5 and 20 seconds
     powerup_timer = 0         # Timer for power-up duration
 
     # Create the clock
