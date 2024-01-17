@@ -37,6 +37,19 @@ FONT = pygame.font.SysFont("comicsans", 30)
 BG = pygame.transform.scale(pygame.image.load("./Images/bg.jpeg"), (WIDTH, HEIGHT))
 PLAYER_IMG = pygame.transform.scale(pygame.image.load("./Images/rocket.png"), (PLAYER_WIDTH, PLAYER_HEIGHT))
 
+# Define the PowerUp class
+# The power-up is the "power-up" in this game it falls from the top of the screen
+class PowerUp(pygame.Rect):
+    def __init__(self):
+        super().__init__(random.randint(0, WIDTH - 15), -15, 15, 15)
+        self.velocity = STAR_VEL  # Adjust the velocity if needed
+
+# Load power-up image
+POWERUP_IMG = pygame.transform.scale(pygame.image.load("./Images/powerup.png"), (15, 15))
+# Load power-up pickup sound
+POWERUP_PICKUP_SOUND = mixer.Sound("./Sound/powerup_sound.flac")
+
+
 # Set the window caption
 pygame.display.set_caption("Space Dodge")
 
@@ -72,7 +85,7 @@ def start_screen():
         pygame.display.update()
 
 # Function to draw the game screen
-def draw(player, elapsed_time, stars):
+def draw(player, elapsed_time, stars, powerup):
     # Draw the game screen
     WIN.blit(BG, (0,0))
     
@@ -86,6 +99,10 @@ def draw(player, elapsed_time, stars):
     # Display the stars
     for star in stars:
         pygame.draw.rect(WIN, "white", star)
+
+    # Display the power-up
+    if powerup is not None:
+        WIN.blit(POWERUP_IMG, (powerup.x, powerup.y))
 
     # Update the display
     pygame.display.update()
@@ -250,6 +267,12 @@ def main():
     # Create the player
     player = pygame.Rect(200, HEIGHT - PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT)
 
+    powerup = None
+    powerup_spawn_time = random.randint(30,90)  # random time between 30 and 90 seconds
+    powerup_interval = random.radint(20,60)     # random time between 20 and 60 seconds
+    powerup_duration = random.radint(5,20)     # random time between 5 and 20 seconds
+    powerup_timer = 0         # Timer for power-up duration
+
     # Create the clock
     clock = pygame.time.Clock()
 
@@ -283,6 +306,7 @@ def main():
                 stars.append(star)
             star_add_increment = max(200, star_add_increment - 50)
             star_count = 0
+        
 
         # Reset the Run variable to if the game quits
         for event in pygame.event.get():
@@ -297,6 +321,40 @@ def main():
             player.x -= PLAYER_VEL
         if Keys[pygame.K_RIGHT] and player.x + PLAYER_VEL + PLAYER_WIDTH <= WIDTH:
             player.x += PLAYER_VEL
+
+
+        # Check if the powerup is ready to span and if it is, create a new power-up
+        if elapsed_time >= powerup_spawn_time and powerup is None:
+            powerup = PowerUp()
+            powerup_spawn_time += powerup_interval
+
+        # Move and draw power-up
+        if powerup is not None:
+            powerup.y += powerup.velocity
+            WIN.blit(POWERUP_IMG, (powerup.x, powerup.y))  # Draw power-up
+
+            # Check for collision with the player
+            if player.colliderect(powerup):
+                # Apply power-up effects
+                POWERUP_PICKUP_SOUND.play()
+                powerup = None  # Deactivate the power-up
+                # Disable a random half of the stars
+                stars_to_disable = random.sample(stars, len(stars) // 2)
+                for star in stars_to_disable:
+                    stars.remove(star)
+                # Set a timer for the power-up duration
+                powerup_timer = powerup_duration
+
+                # Decrement the power-up timer
+                if powerup_timer > 0:
+                    powerup_timer -= 1
+                else:
+                    # Re-enable the stars
+                    powerup_timer = 0
+                    stars = []
+                    for y in range(0, HEIGHT, STAR_HEIGHT):
+                        for x in range(0, WIDTH, STAR_WIDTH):
+                            stars.append(pygame.Rect(x, y, STAR_WIDTH, STAR_HEIGHT))
 
         # Move the stars down the screen
         for star in stars[:]:
@@ -320,7 +378,7 @@ def main():
             run = False  
 
         # Draw the game screen
-        draw(player, elapsed_time, stars)
+        draw(player, elapsed_time, stars, powerup)
 
     # Quit the game
     pygame.quit()
