@@ -10,3 +10,4 @@
 - changed Game Over screen (Highscore + time)       (commit f8180d5)
 - changed README slightly to offer an introduction  (commit 27cb56a)
 - addded a powerup that gets rid of some stars      (commit 91bf9f9)
+- code cleanup and error correction                 (commit d1dc2ce)
