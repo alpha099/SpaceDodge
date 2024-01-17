@@ -1,6 +1,9 @@
 # 🌌 SpaceDodge-
 
-A simple game using Python pygame. 
+Welcome to SpaceDodge, a simple yet engaging Python Pygame experience. In this game, you take control of a spaceship and navigate through space while avoiding descending stars. The objective is to test your piloting skills by dodging the falling stars and achieving the highest score possible.
+
+SpaceDodge offers a straightforward gameplay mechanics where you control the spaceship's movement to evade the stars. The challenge lies in maintaining precise maneuvers as the intensity of falling stars increases over time.
+
 
 ![License](https://img.shields.io/github/license/Ankursehrawat15/SpaceDodge-?logo=github&style=for-the-badge)
 
