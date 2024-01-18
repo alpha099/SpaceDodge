@@ -135,7 +135,7 @@ def gameover_screen(starcount, elapsed_time):
         # Display a black screen
         WIN.fill((0, 0, 0))  
 
-        high_score=math.ceil(starcount*elapsed_time*0.1)
+        high_score=math.ceil(elapsed_time*(1/(starcount/2000))*0.1)
 
         # Get the saved high score from the function get_high_score()
         saved_elapsed_time = float(get_high_score(1))
